@@ -684,16 +684,43 @@ public class ChessBoard implements Chess {
 
     public Move alphaBetaMove(Move move, int depth, int alpha, int beta, boolean maximize) {
         executeMove(move);
-        if (depth == 0 || isOver) {
-            int s = score;
+        Set<Move> moves = generateMoves(maximize);
+        if (depth == 0 || moves.size() == 0) {
+            int s;
+            if (moves.size() == 0) s = (maximize) ? -300 : 300;
+            else s = score;
             undoMove(move);
             return (move != null) ? move.guarantee(s) : null;
         }
 
+        Move minMax = null;
+        // board is now ready to be evaluated
+        for (Move m : moves) {
+            // get static evaluation of move m
+            Move next = alphaBetaMove(m,depth-1, alpha, beta,!maximize);
+            if (next == null) {
+                undoMove(move);
+                return null;
+            }
+            int eval = next.getGuaranteedScore();
+            m.guarantee(eval);
+            // max is the move that has the maximal evaluation between max and the evaluation of m
+            if (maximize) {
+                minMax = Move.maxMove(m, minMax);
+                alpha = Math.max(alpha, eval);
+            }else {
+                minMax = Move.minMove(m, minMax);
+                beta = Math.min(beta, eval);
+            }
+            if (beta <= alpha) break;
+        }
+        // board returns to original state
+        undoMove(move);
+        return minMax;
+        /*
         if (maximize) {
             Move max = null;
             // board is now ready to be evaluated
-            Set<Move> moves = generateMoves(true);
             for (Move m : moves) {
                 // get static evaluation of move m
                 Move next = alphaBetaMove(m,depth-1, alpha, beta,false);
@@ -713,7 +740,6 @@ public class ChessBoard implements Chess {
             return max;
         } else {
             Move min = null;
-            Set<Move> moves = generateMoves(false);
             for (Move m : moves) {
                 Move next = alphaBetaMove(m,depth-1, alpha, beta,true);
                 if (next == null) {
@@ -728,12 +754,13 @@ public class ChessBoard implements Chess {
             }
             undoMove(move);
             return min;
-        }
+        }*/
     }
 
     public Move miniMaxMove(Move move, int depth, boolean maximize) {
         executeMove(move);
-        if (depth == 0 || isOver) {
+        Set<Move> moves = generateMoves(maximize);
+        if (depth == 0 || moves.size() == 0) {
             int s = score;
             undoMove(move);
             return (move != null) ? move.guarantee(s) : null;
@@ -742,7 +769,6 @@ public class ChessBoard implements Chess {
         if (maximize) {
             Move max = null;
             // board is now ready to be evaluated
-            Set<Move> moves = generateMoves(true);
             for (Move m : moves) {
                 // get static evaluation of move m
                 Move next = miniMaxMove(m,depth-1,false);
@@ -760,7 +786,6 @@ public class ChessBoard implements Chess {
             return max;
         } else {
             Move min = null;
-            Set<Move> moves = generateMoves(false);
             for (Move m : moves) {
                 Move next = miniMaxMove(m,depth-1, true);
                 if (next == null) {

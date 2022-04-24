@@ -81,7 +81,7 @@ public class ChessIO {
                 Move abMove = game.alphaBetaMove(null, 5, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
                 double abTime = (System.nanoTime() - start) / 1_000_000_000d;
                 start = System.nanoTime();
-                game.miniMaxMove(null, 5, false);
+                //game.miniMaxMove(null, 5, false);
                 double mmTime = (System.nanoTime() - start) / 1_000_000_000d;
                 game.movePiece(abMove);
                 System.out.print(abMove.getStart().toString() + abMove.getEnd() + " AB Time: ");
