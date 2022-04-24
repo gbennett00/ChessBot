@@ -1,0 +1,38 @@
+This is an attempt to plan my code better:
+
+Chess board:
+fields
+    -8x8 array of pieces (containing color, type, and location)
+    -white pieces
+    -black pieces
+    -boolean array of potential castles
+
+methods:
+
+validmove (two positions)
+    - ensure validity of position
+    - create and execute move
+    - ensure you aren't in check (based on location so that during castle you can use this same method to
+                                make sure all places the king passes thru are not in check)
+    - if you are in check, undo move
+
+executeMove (two positions) -> move
+    - move contains moving piece, attacked piece, and starting and ending location, and must accommodate castling
+    - assign attacked piece
+    - if attacked piece not null, remove from corresponding set of piece
+    - update location of attacked and attacking piece within self
+    - update location on board
+    - return new move using these variables
+
+check
+    - first two assignments are location of place and iterator of pieces of opposite color
+    - for each piece in iterator, if it is a valid move for this piece to move to the king location return true
+    - if after iterating thru each piece, none have been able to move to the kings square, return false
+
+castle
+    - ensure all conditions are met for castle (idk a way to simplify this one)
+
+
+position
+    - all zero indexed within data structure
+    - converts to/from 'A-H', '1-8' on for IO
