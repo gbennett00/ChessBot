@@ -14,6 +14,8 @@ public class ChessBoard implements Chess {
     private final Piece[][] board = new Piece[8][8];
     private final HashSet<Piece> whitePieces = new HashSet<>();
     private final HashSet<Piece> blackPieces = new HashSet<>();
+    private final Piece whiteKing;
+    private final Piece blackKing;
 
     private boolean queenBlackCastle = true;
     private boolean kingBlackCastle = true;
@@ -29,10 +31,14 @@ public class ChessBoard implements Chess {
 
     public ChessBoard() {
         setBoard();
+        whiteKing = locateKing(true);
+        blackKing = locateKing(false);
     }
 
     public ChessBoard(String[][] boardIn) {
         setBoard(boardIn);
+        whiteKing = locateKing(true);
+        blackKing = locateKing(false);
     }
 
     public static void main(String[] args) {
@@ -213,14 +219,18 @@ public class ChessBoard implements Chess {
         return board[p.getRow()][p.getColumn()];
     }
 
-    public Position findKing(boolean isWhite) {
+    public Piece locateKing(boolean isWhite) {
         HashSet<Piece> pieces = (isWhite) ? whitePieces : blackPieces;
         for (Piece p : pieces) {
-            if (p.getType() == 'k') return p.getPosition();
+            if (p.getType() == 'k') return p;
         }
         System.out.println(getBoard());
         System.out.println();
         throw new IllegalStateException();
+    }
+
+    public Piece getKing(boolean isWhite) {
+        return (isWhite) ? whiteKing : blackKing;
     }
 
     public boolean whiteToMove() {
@@ -316,7 +326,7 @@ public class ChessBoard implements Chess {
         }
         Move tempMove = new Move(p1, p2, pieceAt(p1), pieceAt(p2), false);
         executeMove(tempMove);
-        boolean valid = !check || !isInCheck(findKing(pieceAt(p2).getColor() == 'w'));
+        boolean valid = !check || !isInCheck(getKing(pieceAt(p2).getColor() == 'w').getPosition());
         undoMove(tempMove);
         return valid;
     }
@@ -671,7 +681,7 @@ public class ChessBoard implements Chess {
         int row = p.getRow();
         if (piece == null && row != 8 && row != 0) throw new IllegalArgumentException();
         boolean isWhite = ((piece == null && row == 0) || (piece != null && piece.getColor() == 'w'));
-        Position king = findKing(isWhite);
+        Position king = getKing(isWhite).getPosition();
         Iterator<Piece> i = (isWhite) ? blackPieces.iterator() : whitePieces.iterator();
         while (i.hasNext()) {
             Position pos = i.next().getPosition();
@@ -717,44 +727,6 @@ public class ChessBoard implements Chess {
         // board returns to original state
         undoMove(move);
         return minMax;
-        /*
-        if (maximize) {
-            Move max = null;
-            // board is now ready to be evaluated
-            for (Move m : moves) {
-                // get static evaluation of move m
-                Move next = alphaBetaMove(m,depth-1, alpha, beta,false);
-                if (next == null) {
-                    undoMove(move);
-                    return null;
-                }
-                int eval = next.getGuaranteedScore();
-                m.guarantee(eval);
-                // max is the move that has the maximal evaluation between max and the evaluation of m
-                max = Move.maxMove(m, max);
-                alpha = Math.max(alpha, eval);
-                if (beta <= alpha) break;
-            }
-            // board returns to original state
-            undoMove(move);
-            return max;
-        } else {
-            Move min = null;
-            for (Move m : moves) {
-                Move next = alphaBetaMove(m,depth-1, alpha, beta,true);
-                if (next == null) {
-                    undoMove(move);
-                    return null;
-                }
-                int eval = next.getGuaranteedScore();
-                m.guarantee(eval);
-                min = Move.minMove(m, min);
-                beta = Math.min(beta, eval);
-                if (beta <= alpha) break;
-            }
-            undoMove(move);
-            return min;
-        }*/
     }
 
     public Move miniMaxMove(Move move, int depth, boolean maximize) {

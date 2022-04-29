@@ -1,9 +1,12 @@
+import java.sql.SQLData;
+import java.sql.SQLInput;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
 public class ChessIO {
-    static ChessBoard game;
+    static Chess game;
 
     public static void main(String[] args) {
         String[][] board = {{"br", "bn", "bb", null, "bk", "bb", "bn", "br"},
@@ -14,15 +17,16 @@ public class ChessIO {
                             {null, null, null, null, null, null, null, null},
                             {"wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"},
                             {"wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"}};
-        game = new ChessBoard(board);
-        playGame();
+        game = new ChessBoard();
+        //playGame();
+        botVbot();
     }
 
     private static void botVbot() {
         Set<Double> mmTimes = new HashSet<>();
         Set<Double> abTimes = new HashSet<>();
         int i =0;
-        while(!game.isOver() && i++ < 30) {
+        while(!game.isOver() && i++ < 15) {
             if (game.whiteToMove()) {
                 game.movePiece(game.alphaBetaMove(null, 5, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
             } else {
