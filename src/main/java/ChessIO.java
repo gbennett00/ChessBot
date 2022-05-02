@@ -96,7 +96,11 @@ public class ChessIO {
             }
         }
         System.out.println(game.getBoard());
-        String winner = (game.whiteToMove()) ? "Black" : "White";
-        System.out.println("Game over: " + winner + " wins!");
+        int win = game.winner();
+        if (win == 0) System.out.println("Game over: Stalemate!");
+        else {
+            String winner = (win == -1) ? "Black" : "White";
+            System.out.println("Game over: " + winner + " wins!");
+        }
     }
 }

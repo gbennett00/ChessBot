@@ -18,4 +18,6 @@ public interface Chess {
     Move alphaBetaMove(Move move, int depth, int alpha, int beta, boolean maximize);
 
     Move miniMaxMove(Move move, int depth, boolean maximize);
+
+    int winner();
 }

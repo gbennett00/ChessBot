@@ -25,6 +25,7 @@ public class ChessBoard implements Chess {
     private boolean whiteToMove = true;
 
     private boolean isOver = false;
+    private boolean staleMate = false;
 
     private int score = 0;
 
@@ -248,7 +249,18 @@ public class ChessBoard implements Chess {
     }
 
     public boolean isOver() {
-        return isOver;
+        return isOver || staleMate;
+    }
+
+    /**
+     * Returns 1 if white won, 0 if stalemate, -1 if white won, and -99 if the game isn't over yet.
+     * @return Coded int representing who won (if there was a winner)
+     */
+    public int winner() {
+        if (!isOver()) return -99;
+        if (staleMate) return 0;
+        if (whiteToMove) return -1;
+        return 1;
     }
 
 
@@ -296,7 +308,9 @@ public class ChessBoard implements Chess {
      */
     private void checkMate(boolean moveIsWhite) {
         Set<Move> moves = generateMoves(!moveIsWhite);
-        if (moves.size() == 0) isOver = true;
+        Piece king = (moveIsWhite) ? whiteKing : blackKing;
+        if (moves.size() == 0 && isInCheck(king.getPosition())) isOver = true;
+        else if (moves.size() == 0) staleMate = true;
     }
 
     public boolean validMove(Position p1, Position p2, boolean check) {
