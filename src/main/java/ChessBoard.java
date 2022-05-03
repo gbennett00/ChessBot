@@ -579,7 +579,7 @@ public class ChessBoard implements Chess {
                 if (validPosition(row, column)) {
                     Position p2 = new Position(row, column);
                     if (validMove(position, p2, true)) moves.add(new Move(position, p2, pieceAt(position), pieceAt(p2), false));
-                }
+                } else break;
             }
         }
         return moves;
@@ -595,7 +595,7 @@ public class ChessBoard implements Chess {
                 if (validPosition(row, column)) {
                     Position p2 = new Position(row, column);
                     if (validMove(position, p2, true)) moves.add(new Move(position, p2, pieceAt(position), pieceAt(p2), false));
-                }
+                } else break;
             }
         }
         return moves;
@@ -632,7 +632,7 @@ public class ChessBoard implements Chess {
                 if (validPosition(row, column)) {
                     Position p2 = new Position(row, column);
                     if (validMove(position, p2, true)) moves.add(new Move(position, p2, pieceAt(position), pieceAt(p2), false));
-                }
+                } else break;
             }
         }
         return moves;
